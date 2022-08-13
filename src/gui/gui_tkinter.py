@@ -36,10 +36,11 @@ class Application():
             self.full_frame, borderwidth=5)
         self.button_start = tk.Button(
             self.config_content, text="Start", command=self.start_algorithm)
-        self.label_update = tk.Label(self.config_content, text="Updates")
+        self.label_update = tk.Label(self.config_content, text="Updates = 0")
         self.config_content.grid(column=0, row=0, columnspan=5)
         self.button_start.grid(column=0, row=0)
         self.label_update.grid(column=1, row=0)
+        self.updates = 0
 
         self.canvas = tk.Canvas(
             self.full_frame, width=width+2, height=height+2, background='gray75')
@@ -62,11 +63,23 @@ class Application():
                     fill='red')
                 self.rect_ids.append(id)
 
-    def update_canvas(self, updates):
+    def __exit__(self, exc_type, exc_value, traceback):
+        # process join / close
+        pass
+
+    def __enter__(self):
+        return self
+
+    def update_grid(self, updates):
+        self.updates = self.updates + 1
+        self.label_update.config(text="Updates = {}".format(self.updates))
         for id, color in updates:
             self.canvas.itemconfigure(self.rect_ids[id], fill=color)
 
     def start_algorithm(self):
+        # self.algo = Process(algo, args[self.root, numx, numy])
+        # self.algo.start()
+        # # algo with report update with -> app.update_grid(updates)
         pass
 
     def run(self):
@@ -74,5 +87,5 @@ class Application():
 
 
 if __name__ == '__main__':
-    app = Application(width=500, height=400, numx=100, numy=100)
-    app.run()
+    with Application(width=500, height=400, numx=100, numy=100) as app:
+        app.run()
