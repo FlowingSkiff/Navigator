@@ -92,8 +92,8 @@ class Application():
         return self
 
     def __start_algorithm(self):
-        with self.should_exit.get_lock():
-            self.should_exit.value = 0
+        with self.algo_should_exit.get_lock():
+            self.algo_should_exit.value = 0
         self.algo_process = mp.Process(target=compute_target, args=(
             self.data_queue, self.algo_should_exit))
         self.algo_process.start()
