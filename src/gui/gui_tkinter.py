@@ -34,12 +34,20 @@ class Application():
 
         self.config_content = tk.Frame(
             self.full_frame, borderwidth=5)
+        algos = ["None"]
+        variable = tk.StringVar()
+        variable.set(algos[0])
+        self.dropdown_algo = tk.OptionMenu(
+            self.config_content, variable, *algos)
+        self.button_redesign = tk.Button(self.config_content, text="Redesign")
         self.button_start = tk.Button(
             self.config_content, text="Start", command=self.start_algorithm)
         self.label_update = tk.Label(self.config_content, text="Updates = 0")
         self.config_content.grid(column=0, row=0, columnspan=5)
-        self.button_start.grid(column=0, row=0)
-        self.label_update.grid(column=1, row=0)
+        self.dropdown_algo.grid(column=0, row=0)
+        self.button_redesign.grid(column=1, row=0)
+        self.button_start.grid(column=2, row=0)
+        self.label_update.grid(column=3, row=0)
         self.updates = 0
 
         self.canvas = tk.Canvas(
