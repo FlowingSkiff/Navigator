@@ -1,4 +1,6 @@
 import tkinter as tk
+import multiprocessing as mp
+from src.gui.itemcommunication import *
 
 
 def newFile():
@@ -6,6 +8,10 @@ def newFile():
 
 
 def openFile():
+    pass
+
+
+def compute_target(queue, should_exit):
     pass
 
 
@@ -41,7 +47,7 @@ class Application():
             self.config_content, variable, *algos)
         self.button_redesign = tk.Button(self.config_content, text="Redesign")
         self.button_start = tk.Button(
-            self.config_content, text="Start", command=self.start_algorithm)
+            self.config_content, text="Start", command=self.__toggle_algorithm)
         self.label_update = tk.Label(self.config_content, text="Updates = 0")
         self.config_content.grid(column=0, row=0, columnspan=5)
         self.dropdown_algo.grid(column=0, row=0)
@@ -71,27 +77,56 @@ class Application():
                     fill='red')
                 self.rect_ids.append(id)
 
+        self.algo_process = None
+        self.data_queue = mp.Queue()
+        self.algo_should_exit = mp.Value('i', 0)
+
     def __exit__(self, exc_type, exc_value, traceback):
         # process join / close
-        pass
+        if self.algo_process is not None:
+            with self.algo_should_exit.get_lock():
+                self.algo_should_exit.value = 1
+            self.algo_process.join()
 
     def __enter__(self):
         return self
 
-    def update_grid(self, updates):
-        self.updates = self.updates + 1
-        self.label_update.config(text="Updates = {}".format(self.updates))
-        for id, color in updates:
-            self.canvas.itemconfigure(self.rect_ids[id], fill=color)
+    def __start_algorithm(self):
+        with self.should_exit.get_lock():
+            self.should_exit.value = 0
+        self.algo_process = mp.Process(target=compute_target, args=(
+            self.data_queue, self.algo_should_exit))
+        self.algo_process.start()
 
-    def start_algorithm(self):
-        # self.algo = Process(algo, args[self.root, numx, numy])
-        # self.algo.start()
-        # # algo with report update with -> app.update_grid(updates)
-        pass
+    def __kill_algorithm(self):
+        with self.algo_should_exit.get_lock():
+            self.algo_should_exit.value = 1
+        self.algo_process.join()
+        self.algo_process = None
 
     def run(self):
+        self.root.after(100, self.__update)
         self.root.mainloop()
+
+    def __toggle_algorithm(self):
+        if self.algo_process is None:
+            self.__start_algorithm()
+        else:
+            self.__kill_algorithm()
+
+    def __update_canvas(self, item: GridItem):
+        if item.id is not None:
+            self.canvas.itemconfig(item.id, item.color)
+        pass
+
+    def __update(self):
+        if self.algo_process is not None:
+            with self.algo_should_exit.get_lock():
+                if self.algo_should_exit.value == 1:
+                    self.__kill_algorithm()
+        while not self.data_queue.empty():
+            self.__update_canvas(self.data_queue.get())
+        self.root.after(100, self.__update)
 
 
 if __name__ == '__main__':
