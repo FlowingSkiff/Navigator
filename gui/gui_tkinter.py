@@ -1,6 +1,6 @@
 import tkinter as tk
 import multiprocessing as mp
-from src.gui.itemcommunication import *
+from .itemcommunication import *
 
 
 def newFile():
