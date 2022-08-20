@@ -1,11 +1,8 @@
 
 class GridItem():
-    def __init__(self, id=None, x=None, y=None, color=None):
+    def __init__(self, id: int = None, color: str = None):
         self.id = id
-        self.x = x
-        self.y = y
         self.color = color
-        pass
 
 
 if __name__ == '__main__':
