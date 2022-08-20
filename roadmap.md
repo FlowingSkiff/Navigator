@@ -2,11 +2,17 @@
 
 ## GUI API
 
+1. Start/stopping algorithm
+2. multiprocessing storage
+3. building/editing map
+
 ## Pathfinding API
 
-The pathfinding API should take in two arguments, a multiprocessing.Queue for updating the GUI, and a multiprocessing.Value(int) for exiting conditions. The queue should accept a cell ID and a color. The cell ID should be calculated in row major order, i.e. id = x * numy + y where x and y are zero indexed.
+The pathfinding API should take in two arguments, a multiprocessing.Queue for updating the GUI, and a multiprocessing.Value(int) for exiting conditions. The queue should accept a cell ID and a color. The cell ID should be calculated in row major order, i.e. id = x * numy + y + 1 where x and y are zero indexed.
 
-![equation](https://latex.codecogs.com/png.image?id=x\times%20num_y+y)
+![equation](https://latex.codecogs.com/png.image?id=x\times%20n_y+y+1)
+
+Module should import all algoritms into a library with named key and function value.
 
 ## INTEROP
 
