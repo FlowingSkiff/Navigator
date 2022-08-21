@@ -1,7 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import multiprocessing as mp
-from .itemcommunication import *
 from typing import List
 from utils import *
 
